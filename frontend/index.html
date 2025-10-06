@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 LockSafe - Secure Password Manager</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1 class="header-title">🔐 LockSafe</h1>
+            <p class="header-subtitle">Your Privacy Matters</p>
+        </div>
+    </header>
+
+    <!-- Connection Status -->
+    <div id="connectionStatus" class="connection-status">
+        <span id="statusText">Connecting to server...</span>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container main-container">
+        <!-- Master Password Setup Modal -->
+        <div id="masterPasswordModal" class="modal">
+            <div class="modal-content">
+                <h2>Setup Master Password</h2>
+                <p>Create a strong master password to secure your accounts</p>
+                <div class="form-group">
+                    <label class="form-label" for="masterPassword">Master Password</label>
+                    <div class="password-input-group">
+                        <input type="password" id="masterPassword" class="form-control" placeholder="Enter master password">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('masterPassword')">👁️</button>
+                    </div>
+                    <div id="passwordStrength" class="password-strength"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="confirmMasterPassword">Confirm Password</label>
+                    <div class="password-input-group">
+                        <input type="password" id="confirmMasterPassword" class="form-control" placeholder="Confirm master password">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirmMasterPassword')">👁️</button>
+                    </div>
+                </div>
+                <button id="setupMasterPasswordBtn" class="btn btn--primary btn--full-width">Setup Master Password</button>
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <nav class="navigation">
+            <button class="nav-btn active" data-section="create">Create Account</button>
+            <button class="nav-btn" data-section="view">View Accounts</button>
+            <button class="nav-btn" data-section="recovery">Password Recovery</button>
+            <button class="nav-btn" data-section="settings">Settings</button>
+        </nav>
+
+        <!-- Create Account Section -->
+        <div id="createSection" class="section active">
+            <div class="section-header">
+                <h2>📱 Create New Account</h2>
+                <p>Add a new platform account with secure encryption</p>
+            </div>
+            
+            <form id="createAccountForm" class="form">
+                <div class="form-group">
+                    <label class="form-label" for="platform">📱 Platform</label>
+                    <input type="text" id="platform" class="form-control" placeholder="e.g., Gmail, Facebook, Instagram" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="username">👤 Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Your username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email">📧 Email</label>
+                    <input type="email" id="email" class="form-control" placeholder="your.email@example.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">🔑 Password</label>
+                    <div class="password-input-group">
+                        <input type="password" id="password" class="form-control" placeholder="Account password" required>
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('password')">👁️</button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn--primary btn--full-width">Create Account</button>
+            </form>
+        </div>
+
+        <!-- View Accounts Section -->
+        <div id="viewSection" class="section">
+            <div class="section-header">
+                <h2>🔍 View Saved Accounts</h2>
+                <p>Access your encrypted account information</p>
+            </div>
+            
+            <div id="masterPasswordVerification" class="verification-form">
+                <div class="form-group">
+                    <label class="form-label" for="viewMasterPassword">Enter Master Password</label>
+                    <div class="password-input-group">
+                        <input type="password" id="viewMasterPassword" class="form-control" placeholder="Master password">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('viewMasterPassword')">👁️</button>
+                    </div>
+                </div>
+                <button id="verifyMasterPasswordBtn" class="btn btn--primary">Verify & View Accounts</button>
+            </div>
+            
+            <div id="accountsList" class="accounts-list" style="display: none;">
+                <!-- Accounts will be populated here -->
+            </div>
+        </div>
+
+        <!-- Password Recovery Section -->
+        <div id="recoverySection" class="section">
+            <div class="section-header">
+                <h2>🔄 Password Recovery</h2>
+                <p>Reset your account or master password</p>
+            </div>
+            
+            <div class="recovery-options">
+                <div class="recovery-card">
+                    <h3>Reset Account Password</h3>
+                    <p>Reset password for a specific platform account</p>
+                    <button id="resetUserPasswordBtn" class="btn btn--secondary">Reset Account Password</button>
+                </div>
+                
+                <div class="recovery-card">
+                    <h3>Reset Master Password</h3>
+                    <p>Reset your master password (requires email verification)</p>
+                    <button id="resetMasterPasswordBtn" class="btn btn--danger">Reset Master Password</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div id="settingsSection" class="section">
+            <div class="section-header">
+                <h2>⚙️ Settings</h2>
+                <p>Manage your LockSafe preferences</p>
+            </div>
+            
+            <div class="settings-card">
+                <h3>Server Connection</h3>
+                <p><strong>Backend URL:</strong> <span id="currentApiUrl">http://localhost:5000/api</span></p>
+                <div class="form-group">
+                    <label class="form-label" for="apiUrlInput">Change Backend URL:</label>
+                    <input type="text" id="apiUrlInput" class="form-control" placeholder="http://localhost:5000/api">
+                </div>
+                <button id="updateApiUrlBtn" class="btn btn--secondary">Update URL</button>
+                <button id="testConnectionBtn" class="btn btn--info">Test Connection</button>
+            </div>
+            
+            <div class="settings-card">
+                <h3>Change Master Password</h3>
+                <p>Update your master password with a new secure password</p>
+                <button id="changeMasterPasswordBtn" class="btn btn--primary">Change Master Password</button>
+            </div>
+            
+            <div class="settings-card">
+                <h3>Application Info</h3>
+                <p><strong>Version:</strong> 2.0</p>
+                <p><strong>Encryption:</strong> AES-256</p>
+                <p><strong>Hash Algorithm:</strong> SHA-256</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- OTP Modal -->
+    <div id="otpModal" class="modal">
+        <div class="modal-content">
+            <h2>OTP Verification</h2>
+            <p>Enter the OTP sent to your email</p>
+            <p id="otpDebugInfo" class="debug-info" style="display: none;"></p>
+            <div class="form-group">
+                <label class="form-label" for="otpInput">OTP Code</label>
+                <input type="text" id="otpInput" class="form-control" placeholder="Enter 4-digit OTP" maxlength="4">
+            </div>
+            <div class="modal-actions">
+                <button id="verifyOtpBtn" class="btn btn--primary">Verify OTP</button>
+                <button id="cancelOtpBtn" class="btn btn--secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="messageContainer" class="message-container"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2025 LockSafe - Your Privacy Matters</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
